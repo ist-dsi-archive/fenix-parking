@@ -448,9 +448,7 @@
 		<property name="args" value="slot=name,size=20"/>
 		<property name="size" value="50"/>
 		<property name="labelField" value="name"/>
-		<property name="format" value="${name}"/>
 		<property name="indicatorShown" value="true"/>		
-		<property name="className" value="net.sourceforge.fenixedu.domain.organizationalStructure.Party"/>
 		<property name="minChars" value="3"/>
 		<property name="maxCount" value="100"/>		
 		<property name="rawSlotName" value="partyName"/>
