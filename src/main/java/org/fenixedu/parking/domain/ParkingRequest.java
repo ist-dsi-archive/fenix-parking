@@ -34,7 +34,6 @@ import net.sourceforge.fenixedu.domain.contacts.Phone;
 import net.sourceforge.fenixedu.domain.organizationalStructure.Party;
 import net.sourceforge.fenixedu.domain.person.RoleType;
 import net.sourceforge.fenixedu.domain.util.FactoryExecutor;
-import net.sourceforge.fenixedu.util.ByteArray;
 
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.bennu.core.groups.Group;
@@ -46,6 +45,8 @@ import org.slf4j.LoggerFactory;
 
 import pt.ist.fenixframework.FenixFramework;
 import pt.utl.ist.fenix.tools.util.FileUtils;
+
+import com.google.common.io.ByteStreams;
 
 public class ParkingRequest extends ParkingRequest_Base {
 
@@ -496,7 +497,7 @@ public class ParkingRequest extends ParkingRequest_Base {
             }
             if (documentDeliveryType == DocumentDeliveryType.ELECTRONIC_DELIVERY && inputStream != null) {
                 final Group group = getGroup(vehicle.getParkingRequest().getParkingParty().getParty());
-                final ParkingFile parkingFile = new ParkingFile(filename, filename, new ByteArray(inputStream).getBytes(), group);
+                final ParkingFile parkingFile = new ParkingFile(filename, filename, ByteStreams.toByteArray(inputStream), group);
                 new NewParkingDocument(parkingDocumentType, parkingFile, vehicle);
             }
         }
@@ -513,7 +514,7 @@ public class ParkingRequest extends ParkingRequest_Base {
             if (documentDeliveryType == DocumentDeliveryType.ELECTRONIC_DELIVERY && getDriverLicenseInputStream() != null) {
                 final Group group = getGroup(getParkingParty().getParty());
                 final ParkingFile parkingFile =
-                        new ParkingFile(filename, filename, new ByteArray(getDriverLicenseInputStream()).getBytes(), group);
+                        new ParkingFile(filename, filename, ByteStreams.toByteArray(getDriverLicenseInputStream()), group);
                 new NewParkingDocument(NewParkingDocumentType.DRIVER_LICENSE, parkingFile, parkingRequest);
             }
         }
