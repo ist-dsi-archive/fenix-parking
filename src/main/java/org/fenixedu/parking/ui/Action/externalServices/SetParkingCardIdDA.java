@@ -130,7 +130,7 @@ public class SetParkingCardIdDA extends FenixDispatchAction {
                 createParkingParty(cardGenerationEntry.getPerson());
             }
             cardGenerationEntry.getPerson().getParkingParty().setCardNumber(parkingCardID);
-            return cardGenerationEntry.getPerson().getIstUsername();
+            return cardGenerationEntry.getPerson().getUsername();
         } else {
             throw new NotAuthorizedException();
         }
@@ -148,7 +148,7 @@ public class SetParkingCardIdDA extends FenixDispatchAction {
                 createParkingParty(entry.getPerson());
             }
             entry.getPerson().getParkingParty().setCardNumber(parkingCardID);
-            return entry.getPerson().getIstUsername();
+            return entry.getPerson().getUsername();
         } else {
             throw new NotAuthorizedException();
         }
