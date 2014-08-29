@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import net.sourceforge.fenixedu.applicationTier.Servico.commons.FactoryExecutor;
 import net.sourceforge.fenixedu.domain.Person;
-import net.sourceforge.fenixedu.domain.util.FactoryExecutor;
 
 import org.fenixedu.parking.domain.ParkingGroup;
 import org.fenixedu.parking.domain.ParkingParty;
