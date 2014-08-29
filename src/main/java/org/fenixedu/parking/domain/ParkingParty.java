@@ -29,7 +29,6 @@ import net.sourceforge.fenixedu.domain.Employee;
 import net.sourceforge.fenixedu.domain.ExecutionSemester;
 import net.sourceforge.fenixedu.domain.ExecutionYear;
 import net.sourceforge.fenixedu.domain.ExternalTeacherAuthorization;
-import net.sourceforge.fenixedu.domain.PartyClassification;
 import net.sourceforge.fenixedu.domain.Person;
 import net.sourceforge.fenixedu.domain.StudentCurricularPlan;
 import net.sourceforge.fenixedu.domain.Teacher;
@@ -326,7 +325,7 @@ public class ParkingParty extends ParkingParty_Base {
                 StringBuilder stringBuilder =
                         new StringBuilder(BundleUtil.getStringFromResourceBundle("resources.ParkingResources",
                                 "message.person.identification", new String[] { RoleType.RESEARCHER.getLocalizedName(),
-                                        person.getMostSignificantNumber().toString() }));
+                                        PartyClassification.getMostSignificantNumber(person).toString() }));
 
                 String researchUnitNames = person.getWorkingResearchUnitNames();
                 if (!StringUtils.isEmpty(researchUnitNames)) {
@@ -644,8 +643,9 @@ public class ParkingParty extends ParkingParty_Base {
             if (getParkingGroup().getGroupName().equalsIgnoreCase("Não Docentes")) {
                 return person.getEmployee() != null && person.getEmployee().getCurrentWorkingPlace() != null;
             }
+            PartyClassification classification = PartyClassification.getPartyClassification(person);
             if (getParkingGroup().getGroupName().equalsIgnoreCase("Especiais")) {
-                return person.getPartyClassification() != PartyClassification.PERSON;
+                return classification != PartyClassification.PERSON;
             }
             if (getParkingGroup().getGroupName().equalsIgnoreCase("2º ciclo")) {
                 if (person.getStudent() != null) {
@@ -673,8 +673,7 @@ public class ParkingParty extends ParkingParty_Base {
                 }
             }
             if (getParkingGroup().getGroupName().equalsIgnoreCase("Limitados")) {
-                return person.getPartyClassification() != PartyClassification.PERSON
-                        && person.getPartyClassification() != PartyClassification.RESEARCHER;
+                return classification != PartyClassification.PERSON && classification != PartyClassification.RESEARCHER;
             }
         }
         return Boolean.FALSE;
@@ -793,7 +792,7 @@ public class ParkingParty extends ParkingParty_Base {
     }
 
     public PartyClassification getPartyClassification() {
-        return getParty().isPerson() ? ((Person) getParty()).getPartyClassification() : null;
+        return PartyClassification.getPartyClassification(getParty());
     }
 
     public DateTime getCardEndDateToCompare() {

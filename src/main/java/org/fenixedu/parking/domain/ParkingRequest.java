@@ -26,7 +26,6 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
-import net.sourceforge.fenixedu.domain.PartyClassification;
 import net.sourceforge.fenixedu.domain.Person;
 import net.sourceforge.fenixedu.domain.accessControl.RoleGroup;
 import net.sourceforge.fenixedu.domain.contacts.EmailAddress;
@@ -76,9 +75,9 @@ public class ParkingRequest extends ParkingRequest_Base {
         setRequestedAs(creator.getRequestAs() != null ? creator.getRequestAs() : creator.getParkingParty().getSubmitAsRoles()
                 .iterator().next());
         boolean limitlessAccessCard = creator.isLimitlessAccessCard();
+        PartyClassification classification = PartyClassification.getPartyClassification(creator.getParkingParty().getParty());
         if (limitlessAccessCard == false
-                && (creator.getParkingParty().getParty().getPartyClassification().equals(PartyClassification.TEACHER) || creator
-                        .getParkingParty().getParty().getPartyClassification().equals(PartyClassification.EMPLOYEE))) {
+                && (classification.equals(PartyClassification.TEACHER) || classification.equals(PartyClassification.EMPLOYEE))) {
             limitlessAccessCard = true;
         }
         setLimitlessAccessCard(limitlessAccessCard);

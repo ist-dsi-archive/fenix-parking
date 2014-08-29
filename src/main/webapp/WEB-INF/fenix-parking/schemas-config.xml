@@ -433,7 +433,7 @@
 		<property name="eachLayout" value="this-does-not-exist" />
 	</slot>
 	<slot name="partyClassification" key="label.type" layout="menu-select">
-		<property name="providerClass" value="net.sourceforge.fenixedu.presentationTier.renderers.providers.choiceType.replacement.single.PartyClassificationProvider" />
+		<property name="providerClass" value="org.fenixedu.parking.ui.renderers.providers.choiceType.replacement.single.PartyClassificationProvider" />
 		<property name="eachLayout" value="this-does-not-exist" />
 	</slot>
 	<slot name="personName" key="label.name" bundle="PARKING_RESOURCES">

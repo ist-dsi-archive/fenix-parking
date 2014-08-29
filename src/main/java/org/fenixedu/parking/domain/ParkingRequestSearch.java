@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.List;
 
 import net.sourceforge.fenixedu.domain.ExecutionSemester;
-import net.sourceforge.fenixedu.domain.PartyClassification;
 import net.sourceforge.fenixedu.domain.Person;
 import net.sourceforge.fenixedu.domain.Teacher;
 import net.sourceforge.fenixedu.domain.degree.DegreeType;
@@ -136,7 +135,7 @@ public class ParkingRequestSearch implements Serializable {
                     }
                 }
                 return student.getActiveRegistrationByDegreeType(degreeType) != null;
-            } else if (parkingParty.getParty().getPartyClassification() == getPartyClassification()) {
+            } else if (PartyClassification.getPartyClassification(parkingParty.getParty()) == getPartyClassification()) {
                 if (getPartyClassification() == PartyClassification.TEACHER) {
                     final Teacher teacher = ((Person) parkingParty.getParty()).getTeacher();
                     return teacher == null || !teacher.isMonitor(ExecutionSemester.readActualExecutionSemester());
