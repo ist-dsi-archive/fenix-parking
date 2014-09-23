@@ -46,7 +46,7 @@ public enum PartyClassification {
             final Teacher teacher = person.getTeacher();
             if (teacher != null) {
                 final ExecutionSemester actualExecutionSemester = ExecutionSemester.readActualExecutionSemester();
-                if (!teacher.isInactive(actualExecutionSemester) && !teacher.isMonitor(actualExecutionSemester)) {
+                if (!!teacher.isActiveForSemester(actualExecutionSemester) && !teacher.isMonitor(actualExecutionSemester)) {
                     return PartyClassification.TEACHER;
                 }
             }

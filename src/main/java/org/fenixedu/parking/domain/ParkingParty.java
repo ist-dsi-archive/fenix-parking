@@ -276,7 +276,7 @@ public class ParkingParty extends ParkingParty_Base {
                 String currentWorkingDepartmentName =
                         teacher.getCurrentWorkingDepartment() != null ? teacher.getCurrentWorkingDepartment().getName() : null;
                 PersonContractSituation currentOrLastTeacherContractSituation =
-                        teacher.getCurrentOrLastTeacherContractSituation();
+                        PersonContractSituation.getCurrentOrLastTeacherContractSituation(teacher);
                 if (currentOrLastTeacherContractSituation != null) {
                     String employeeType = RoleType.TEACHER.getLocalizedName();
                     if (teacher.isMonitor(currentExecutionSemester)) {
@@ -289,7 +289,7 @@ public class ParkingParty extends ParkingParty_Base {
 
                 String employeeType = "Docente Autorizado";
                 ExternalTeacherAuthorization teacherAuthorization =
-                        (ExternalTeacherAuthorization) teacher.getTeacherAuthorization(currentExecutionSemester);
+                        (ExternalTeacherAuthorization) teacher.getTeacherAuthorization(currentExecutionSemester).orElse(null);
                 if (teacherAuthorization != null && teacherAuthorization.getCanPark()) {
                     occupations.add(getOccupation(employeeType, teacher.getTeacherId(), currentWorkingDepartmentName,
                             currentExecutionSemester.getBeginDateYearMonthDay().toLocalDate(), currentExecutionSemester
@@ -515,7 +515,7 @@ public class ParkingParty extends ParkingParty_Base {
             final Person person = (Person) getParty();
             final Teacher teacher = person.getTeacher();
             ExecutionSemester actualExecutionSemester = ExecutionSemester.readActualExecutionSemester();
-            final boolean isTeacher = teacher != null && !teacher.isInactive(actualExecutionSemester);
+            final boolean isTeacher = teacher != null && !!teacher.isActiveForSemester(actualExecutionSemester);
             final boolean isMonitor = isTeacher && teacher.isMonitor(actualExecutionSemester);
             final Employee employee = person.getEmployee();
 
