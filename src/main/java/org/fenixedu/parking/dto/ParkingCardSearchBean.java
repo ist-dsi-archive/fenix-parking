@@ -23,8 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.sourceforge.fenixedu.domain.Person;
-
 import org.apache.commons.beanutils.BeanComparator;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.fenixedu.parking.domain.ParkingGroup;
@@ -161,9 +159,6 @@ public class ParkingCardSearchBean implements Serializable {
     }
 
     private boolean satisfiesUserState(ParkingParty parkingParty) {
-        if (parkingParty.getParty().isPerson() && ((Person) parkingParty.getParty()).isExternalPerson()) {
-            return Boolean.TRUE;
-        }
         switch (getParkingCardUserState()) {
         case ALL:
             return Boolean.TRUE;

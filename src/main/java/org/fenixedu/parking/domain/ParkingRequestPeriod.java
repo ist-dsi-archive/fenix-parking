@@ -18,8 +18,7 @@
  */
 package org.fenixedu.parking.domain;
 
-import net.sourceforge.fenixedu.domain.exceptions.DomainException;
-
+import org.fenixedu.academic.domain.exceptions.DomainException;
 import org.fenixedu.bennu.core.domain.Bennu;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;

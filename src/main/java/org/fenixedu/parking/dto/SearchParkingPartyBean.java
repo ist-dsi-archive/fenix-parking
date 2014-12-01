@@ -20,7 +20,7 @@ package org.fenixedu.parking.dto;
 
 import java.io.Serializable;
 
-import net.sourceforge.fenixedu.domain.organizationalStructure.Party;
+import org.fenixedu.academic.domain.organizationalStructure.Party;
 
 public class SearchParkingPartyBean implements Serializable {
 

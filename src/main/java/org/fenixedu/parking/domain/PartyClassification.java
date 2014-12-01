@@ -18,15 +18,17 @@
  */
 package org.fenixedu.parking.domain;
 
-import net.sourceforge.fenixedu.domain.ExecutionSemester;
-import net.sourceforge.fenixedu.domain.Person;
-import net.sourceforge.fenixedu.domain.Teacher;
-import net.sourceforge.fenixedu.domain.degree.DegreeType;
-import net.sourceforge.fenixedu.domain.organizationalStructure.Party;
-import net.sourceforge.fenixedu.domain.organizationalStructure.Unit;
-import net.sourceforge.fenixedu.domain.person.RoleType;
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.PersonContractSituation;
-import net.sourceforge.fenixedu.domain.teacher.CategoryType;
+import org.fenixedu.academic.domain.ExecutionSemester;
+import org.fenixedu.academic.domain.Person;
+import org.fenixedu.academic.domain.Teacher;
+import org.fenixedu.academic.domain.degree.DegreeType;
+import org.fenixedu.academic.domain.organizationalStructure.Party;
+import org.fenixedu.academic.domain.organizationalStructure.Unit;
+
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.PersonContractSituation;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.PersonProfessionalData;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.ProfessionalCategory;
+import pt.ist.fenixedu.contracts.domain.util.CategoryType;
 
 public enum PartyClassification {
     TEACHER, EMPLOYEE, RESEARCHER, GRANT_OWNER, MASTER_DEGREE, DEGREE, BOLONHA_SPECIALIZATION_DEGREE,
@@ -46,14 +48,15 @@ public enum PartyClassification {
             final Teacher teacher = person.getTeacher();
             if (teacher != null) {
                 final ExecutionSemester actualExecutionSemester = ExecutionSemester.readActualExecutionSemester();
-                if (!!teacher.isActiveForSemester(actualExecutionSemester) && !teacher.isMonitor(actualExecutionSemester)) {
+                if (!PersonProfessionalData.isTeacherInactive(teacher, actualExecutionSemester)
+                        && !ProfessionalCategory.isMonitor(teacher, actualExecutionSemester)) {
                     return PartyClassification.TEACHER;
                 }
             }
             if (person.getEmployee() != null && person.getEmployee().isActive()) {
                 return PartyClassification.EMPLOYEE;
             }
-            if (person.getPersonRole(RoleType.GRANT_OWNER) != null && person.getEmployee() != null) {
+            if (person.getEmployee() != null) {
                 final PersonContractSituation currentGrantOwnerContractSituation =
                         person.getPersonProfessionalData() != null ? person.getPersonProfessionalData()
                                 .getCurrentPersonContractSituationByCategoryType(CategoryType.GRANT_OWNER) : null;

@@ -25,11 +25,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.fenixedu.domain.Person;
-import net.sourceforge.fenixedu.domain.QueueJob.Priority;
-import net.sourceforge.fenixedu.domain.QueueJobResult;
-
 import org.apache.commons.lang.StringUtils;
+import org.fenixedu.academic.domain.Person;
+import org.fenixedu.academic.domain.QueueJobResult;
 import org.fenixedu.parking.domain.ParkingParty;
 import org.fenixedu.parking.domain.Vehicle;
 import org.joda.time.DateTime;

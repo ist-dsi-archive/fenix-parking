@@ -25,30 +25,25 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import net.sourceforge.fenixedu.domain.Employee;
-import net.sourceforge.fenixedu.domain.ExecutionSemester;
-import net.sourceforge.fenixedu.domain.ExecutionYear;
-import net.sourceforge.fenixedu.domain.ExternalTeacherAuthorization;
-import net.sourceforge.fenixedu.domain.Person;
-import net.sourceforge.fenixedu.domain.StudentCurricularPlan;
-import net.sourceforge.fenixedu.domain.Teacher;
-import net.sourceforge.fenixedu.domain.degree.DegreeType;
-import net.sourceforge.fenixedu.domain.exceptions.DomainException;
-import net.sourceforge.fenixedu.domain.organizationalStructure.AccountabilityTypeEnum;
-import net.sourceforge.fenixedu.domain.organizationalStructure.Invitation;
-import net.sourceforge.fenixedu.domain.organizationalStructure.Party;
-import net.sourceforge.fenixedu.domain.organizationalStructure.Unit;
-import net.sourceforge.fenixedu.domain.person.RoleType;
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.PersonContractSituation;
-import net.sourceforge.fenixedu.domain.phd.PhdIndividualProgramProcess;
-import net.sourceforge.fenixedu.domain.student.Registration;
-import net.sourceforge.fenixedu.domain.student.Student;
-import net.sourceforge.fenixedu.domain.teacher.CategoryType;
-import net.sourceforge.fenixedu.util.BundleUtil;
-
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
+import org.fenixedu.academic.domain.ExecutionSemester;
+import org.fenixedu.academic.domain.ExecutionYear;
+import org.fenixedu.academic.domain.Person;
+import org.fenixedu.academic.domain.StudentCurricularPlan;
+import org.fenixedu.academic.domain.Teacher;
+import org.fenixedu.academic.domain.degree.DegreeType;
+import org.fenixedu.academic.domain.exceptions.DomainException;
+import org.fenixedu.academic.domain.organizationalStructure.AccountabilityTypeEnum;
+import org.fenixedu.academic.domain.organizationalStructure.Party;
+import org.fenixedu.academic.domain.organizationalStructure.Unit;
+import org.fenixedu.academic.domain.person.RoleType;
+import org.fenixedu.academic.domain.phd.PhdIndividualProgramProcess;
+import org.fenixedu.academic.domain.student.Registration;
+import org.fenixedu.academic.domain.student.Student;
+import org.fenixedu.academic.util.Bundle;
 import org.fenixedu.bennu.core.domain.Bennu;
+import org.fenixedu.bennu.core.i18n.BundleUtil;
 import org.fenixedu.commons.i18n.I18N;
 import org.fenixedu.parking.domain.ParkingRequest.ParkingRequestFactoryCreator;
 import org.fenixedu.parking.dto.ParkingPartyBean;
@@ -58,6 +53,15 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import pt.ist.fenixedu.contracts.domain.Employee;
+import pt.ist.fenixedu.contracts.domain.accessControl.ActiveEmployees;
+import pt.ist.fenixedu.contracts.domain.accessControl.ActiveGrantOwner;
+import pt.ist.fenixedu.contracts.domain.organizationalStructure.Invitation;
+import pt.ist.fenixedu.contracts.domain.organizationalStructure.ResearchUnit;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.PersonContractSituation;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.PersonProfessionalData;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.ProfessionalCategory;
+import pt.ist.fenixedu.contracts.domain.util.CategoryType;
 import pt.ist.fenixframework.dml.runtime.RelationAdapter;
 
 import com.google.common.base.Joiner;
@@ -215,53 +219,53 @@ public class ParkingParty extends ParkingParty_Base {
         return null;
     }
 
-    public List<RoleType> getSubmitAsRoles() {
-        List<RoleType> roles = new ArrayList<RoleType>();
+    public List<String> getSubmitAsRoles() {
+        List<String> roles = new ArrayList<String>();
         if (getParty().isPerson()) {
             Person person = (Person) getParty();
             Teacher teacher = person.getTeacher();
-            if (teacher != null && person.getPersonRole(RoleType.TEACHER) != null
-                    && !teacher.isMonitor(ExecutionSemester.readActualExecutionSemester())) {
-                roles.add(RoleType.TEACHER);
+            if (teacher != null && RoleType.TEACHER.isMember(person.getUser())
+                    && !ProfessionalCategory.isMonitor(teacher, ExecutionSemester.readActualExecutionSemester())) {
+                roles.add(RoleType.TEACHER.name());
             }
             Employee employee = person.getEmployee();
-            if (employee != null && person.getPersonRole(RoleType.TEACHER) == null
-                    && person.getPersonRole(RoleType.EMPLOYEE) != null
+            if (employee != null && !RoleType.TEACHER.isMember(person.getUser())
+                    && new ActiveEmployees().isMember(person.getUser())
                     && employee.getCurrentContractByContractType(AccountabilityTypeEnum.WORKING_CONTRACT) != null) {
-                roles.add(RoleType.EMPLOYEE);
+                roles.add("EMPLOYEE");
             }
             Student student = person.getStudent();
-            if (student != null && person.getPersonRole(RoleType.STUDENT) != null) {
+            if (student != null && RoleType.STUDENT.isMember(person.getUser())) {
                 DegreeType degreeType = student.getMostSignificantDegreeType();
                 Collection<Registration> registrations = student.getRegistrationsByDegreeType(degreeType);
                 for (Registration registration : registrations) {
                     StudentCurricularPlan scp = registration.getActiveStudentCurricularPlan();
                     if (scp != null) {
-                        roles.add(RoleType.STUDENT);
+                        roles.add(RoleType.STUDENT.name());
                         break;
                     }
                 }
                 if (!roles.contains(RoleType.STUDENT)) {
                     for (PhdIndividualProgramProcess phdIndividualProgramProcess : person.getPhdIndividualProgramProcessesSet()) {
                         if (phdIndividualProgramProcess.getActiveState().isPhdActive()) {
-                            roles.add(RoleType.STUDENT);
+                            roles.add(RoleType.STUDENT.name());
                             break;
                         }
                     }
                 }
             }
-            if (person.getPersonRole(RoleType.GRANT_OWNER) != null && person.getEmployee() != null) {
+            if (person.getEmployee() != null) {
                 PersonContractSituation currentGrantOwnerContractSituation =
                         person.getPersonProfessionalData() != null ? person.getPersonProfessionalData()
                                 .getCurrentPersonContractSituationByCategoryType(CategoryType.GRANT_OWNER) : null;
                 if (currentGrantOwnerContractSituation != null) {
-                    roles.add(RoleType.GRANT_OWNER);
+                    roles.add("GRANT_OWNER");
                 }
             }
 
         }
         if (roles.size() == 0) {
-            roles.add(RoleType.PERSON);
+            roles.add(RoleType.PERSON.name());
         }
         return roles;
     }
@@ -273,13 +277,12 @@ public class ParkingParty extends ParkingParty_Base {
             Teacher teacher = person.getTeacher();
             if (teacher != null) {
                 ExecutionSemester currentExecutionSemester = ExecutionSemester.readActualExecutionSemester();
-                String currentWorkingDepartmentName =
-                        teacher.getCurrentWorkingDepartment() != null ? teacher.getCurrentWorkingDepartment().getName() : null;
+                String currentWorkingDepartmentName = teacher.getDepartment() != null ? teacher.getDepartment().getName() : null;
                 PersonContractSituation currentOrLastTeacherContractSituation =
                         PersonContractSituation.getCurrentOrLastTeacherContractSituation(teacher);
                 if (currentOrLastTeacherContractSituation != null) {
                     String employeeType = RoleType.TEACHER.getLocalizedName();
-                    if (teacher.isMonitor(currentExecutionSemester)) {
+                    if (ProfessionalCategory.isMonitor(teacher, currentExecutionSemester)) {
                         employeeType = "Monitor";
                     }
                     occupations.add(getOccupation(employeeType, teacher.getPerson().getEmployee().getEmployeeNumber().toString(),
@@ -288,9 +291,7 @@ public class ParkingParty extends ParkingParty_Base {
                 }
 
                 String employeeType = "Docente Autorizado";
-                ExternalTeacherAuthorization teacherAuthorization =
-                        (ExternalTeacherAuthorization) teacher.getTeacherAuthorization(currentExecutionSemester).orElse(null);
-                if (teacherAuthorization != null && teacherAuthorization.getCanPark()) {
+                if (teacher.hasTeacherAuthorization()) {
                     occupations.add(getOccupation(employeeType, teacher.getTeacherId(), currentWorkingDepartmentName,
                             currentExecutionSemester.getBeginDateYearMonthDay().toLocalDate(), currentExecutionSemester
                                     .getEndDateYearMonthDay().toLocalDate()));
@@ -301,20 +302,20 @@ public class ParkingParty extends ParkingParty_Base {
             if (currentEmployeeContractSituation != null) {
                 Unit currentUnit = person.getEmployee().getCurrentWorkingPlace();
                 String thisOccupation =
-                        getOccupation(RoleType.EMPLOYEE.getLocalizedName(), person.getEmployee().getEmployeeNumber().toString(),
-                                currentUnit == null ? null : currentUnit.getName(),
+                        getOccupation(BundleUtil.getString(Bundle.ENUMERATION, "EMPLOYEE"), person.getEmployee()
+                                .getEmployeeNumber().toString(), currentUnit == null ? null : currentUnit.getName(),
                                 currentEmployeeContractSituation.getBeginDate(), currentEmployeeContractSituation.getEndDate());
                 occupations.add(thisOccupation);
             }
-            if (person.getPersonRole(RoleType.GRANT_OWNER) != null && person.getEmployee() != null) {
+            if (person.getEmployee() != null) {
                 PersonContractSituation currentGrantOwnerContractSituation =
                         person.getPersonProfessionalData() != null ? person.getPersonProfessionalData()
                                 .getCurrentPersonContractSituationByCategoryType(CategoryType.GRANT_OWNER) : null;
                 if (currentGrantOwnerContractSituation != null) {
                     Unit currentUnit = person.getEmployee().getCurrentWorkingPlace();
                     String thisOccupation =
-                            getOccupation(RoleType.GRANT_OWNER.getLocalizedName(), person.getEmployee().getEmployeeNumber()
-                                    .toString(), currentUnit == null ? null : currentUnit.getName(),
+                            getOccupation(BundleUtil.getString(Bundle.ENUMERATION, "GRANT_OWNER"), person.getEmployee()
+                                    .getEmployeeNumber().toString(), currentUnit == null ? null : currentUnit.getName(),
                                     currentGrantOwnerContractSituation.getBeginDate(),
                                     currentGrantOwnerContractSituation.getEndDate());
                     occupations.add(thisOccupation);
@@ -323,11 +324,11 @@ public class ParkingParty extends ParkingParty_Base {
 
             if (person.getResearcher() != null) {
                 StringBuilder stringBuilder =
-                        new StringBuilder(BundleUtil.getStringFromResourceBundle("resources.ParkingResources",
-                                "message.person.identification", new String[] { RoleType.RESEARCHER.getLocalizedName(),
+                        new StringBuilder(BundleUtil.getString("resources.ParkingResources", "message.person.identification",
+                                new String[] { RoleType.RESEARCHER.getLocalizedName(),
                                         PartyClassification.getMostSignificantNumber(person).toString() }));
 
-                String researchUnitNames = person.getWorkingResearchUnitNames();
+                String researchUnitNames = getWorkingResearchUnitNames(person);
                 if (!StringUtils.isEmpty(researchUnitNames)) {
                     stringBuilder.append(researchUnitNames).append("<br/>");
                 }
@@ -348,7 +349,7 @@ public class ParkingParty extends ParkingParty_Base {
                 }
             }
             Student student = person.getStudent();
-            if (student != null && person.getPersonRole(RoleType.STUDENT) != null) {
+            if (student != null && RoleType.STUDENT.isMember(person.getUser())) {
 
                 StringBuilder stringBuilder = null;
                 for (Registration registration : student.getActiveRegistrations()) {
@@ -356,7 +357,7 @@ public class ParkingParty extends ParkingParty_Base {
                     if (scp != null) {
                         if (stringBuilder == null) {
                             stringBuilder =
-                                    new StringBuilder(BundleUtil.getStringFromResourceBundle("resources.ParkingResources",
+                                    new StringBuilder(BundleUtil.getString("resources.ParkingResources",
                                             "message.person.identification", new String[] { RoleType.STUDENT.getLocalizedName(),
                                                     student.getNumber().toString() }));
 
@@ -389,7 +390,7 @@ public class ParkingParty extends ParkingParty_Base {
                 }
 
             }
-            List<Invitation> invitations = person.getActiveInvitations();
+            List<Invitation> invitations = Invitation.getActiveInvitations(person);
             if (!invitations.isEmpty()) {
                 for (Invitation invitation : invitations) {
                     String thisOccupation =
@@ -402,10 +403,23 @@ public class ParkingParty extends ParkingParty_Base {
         return occupations;
     }
 
+    private static String getWorkingResearchUnitNames(Person person) {
+        String names = "";
+        final List<ResearchUnit> units = ResearchUnit.getWorkingResearchUnits(person);
+        int length = units.size();
+        for (final ResearchUnit unit : units) {
+            names += unit.getName();
+            if (--length > 0) {
+                names += ", ";
+            }
+        }
+        return names;
+    }
+
     private String getOccupation(String type, String identification, String workingPlace) {
         StringBuilder stringBuilder =
-                new StringBuilder(BundleUtil.getStringFromResourceBundle("resources.ParkingResources",
-                        "message.person.identification", new String[] { type, identification }));
+                new StringBuilder(BundleUtil.getString("resources.ParkingResources", "message.person.identification",
+                        new String[] { type, identification }));
         if (!StringUtils.isBlank(workingPlace)) {
             stringBuilder.append(workingPlace).append("<br/>");
         }
@@ -432,7 +446,7 @@ public class ParkingParty extends ParkingParty_Base {
         if (getParty().isPerson()) {
             Person person = (Person) getParty();
             Student student = person.getStudent();
-            if (student != null && person.getPersonRole(RoleType.STUDENT) != null) {
+            if (student != null && RoleType.STUDENT.isMember(person.getUser())) {
                 for (Registration registration : student.getActiveRegistrations()) {
                     StringBuilder stringBuilder = new StringBuilder();
                     StudentCurricularPlan scp = registration.getLastStudentCurricularPlan();
@@ -498,12 +512,13 @@ public class ParkingParty extends ParkingParty_Base {
             final Person person = (Person) getParty();
             final Employee employee = person.getEmployee();
             if (employee != null
-                    && (person.hasRole(RoleType.TEACHER) || person.hasRole(RoleType.EMPLOYEE)
-                            || person.hasRole(RoleType.RESEARCHER) || person.hasRole(RoleType.GRANT_OWNER))) {
+                    && (RoleType.TEACHER.isMember(person.getUser()) || new ActiveEmployees().isMember(person.getUser())
+                            || RoleType.RESEARCHER.isMember(person.getUser()) || new ActiveGrantOwner()
+                                .isMember(person.getUser()))) {
                 result.add(employee.getEmployeeNumber().toString());
             }
             final Student student = person.getStudent();
-            if (person.hasRole(RoleType.STUDENT)) {
+            if (RoleType.STUDENT.isMember(person.getUser())) {
                 result.add(student.getNumber().toString());
             }
         }
@@ -515,12 +530,13 @@ public class ParkingParty extends ParkingParty_Base {
             final Person person = (Person) getParty();
             final Teacher teacher = person.getTeacher();
             ExecutionSemester actualExecutionSemester = ExecutionSemester.readActualExecutionSemester();
-            final boolean isTeacher = teacher != null && !!teacher.isActiveForSemester(actualExecutionSemester);
-            final boolean isMonitor = isTeacher && teacher.isMonitor(actualExecutionSemester);
+            final boolean isTeacher =
+                    teacher != null && !PersonProfessionalData.isTeacherInactive(teacher, actualExecutionSemester);
+            final boolean isMonitor = isTeacher && ProfessionalCategory.isMonitor(teacher, actualExecutionSemester);
             final Employee employee = person.getEmployee();
 
             if (employee != null && employee.getCurrentWorkingContract() != null) {
-                if (person.getPersonRole(RoleType.TEACHER) == null || (teacher != null && isTeacher && !isMonitor)) {
+                if (!RoleType.TEACHER.isMember(person.getUser()) || (teacher != null && isTeacher && !isMonitor)) {
                     return employee.getEmployeeNumber();
                 }
             }
@@ -638,7 +654,7 @@ public class ParkingParty extends ParkingParty_Base {
         if (getParty().isPerson()) {
             Person person = (Person) getParty();
             if (getParkingGroup().getGroupName().equalsIgnoreCase("Docentes")) {
-                return person.getTeacher() != null && person.getTeacher().getCurrentWorkingDepartment() != null;
+                return person.getTeacher() != null && person.getTeacher().getDepartment() != null;
             }
             if (getParkingGroup().getGroupName().equalsIgnoreCase("Não Docentes")) {
                 return person.getEmployee() != null && person.getEmployee().getCurrentWorkingPlace() != null;
@@ -655,7 +671,7 @@ public class ParkingParty extends ParkingParty_Base {
                 }
             }
             if (getParkingGroup().getGroupName().equalsIgnoreCase("Bolseiros")) {
-                if (person.getPersonRole(RoleType.GRANT_OWNER) != null && person.getEmployee() != null) {
+                if (person.getEmployee() != null) {
                     PersonContractSituation currentGrantOwnerContractSituation =
                             person.getPersonProfessionalData() != null ? person.getPersonProfessionalData()
                                     .getCurrentPersonContractSituationByCategoryType(CategoryType.GRANT_OWNER) : null;
@@ -696,21 +712,21 @@ public class ParkingParty extends ParkingParty_Base {
     }
 
     public boolean hasRolesToRequestUnlimitedCard() {
-        List<RoleType> roles = getSubmitAsRoles();
-        if (roles.contains(RoleType.GRANT_OWNER)) {
+        List<String> roles = getSubmitAsRoles();
+        if (roles.contains("GRANT_OWNER")) {
             return Boolean.TRUE;
-        } else if (roles.contains(RoleType.STUDENT) && canRequestUnlimitedCard(((Person) getParty()).getStudent())) {
+        } else if (roles.contains("STUDENT") && canRequestUnlimitedCard(((Person) getParty()).getStudent())) {
             return Boolean.TRUE;
         }
         return Boolean.FALSE;
     }
 
-    public RoleType getRoleToRequestUnlimitedCard() {
-        List<RoleType> roles = getSubmitAsRoles();
-        if (roles.contains(RoleType.GRANT_OWNER)) {
-            return RoleType.GRANT_OWNER;
-        } else if (roles.contains(RoleType.STUDENT) && canRequestUnlimitedCard(((Person) getParty()).getStudent())) {
-            return RoleType.STUDENT;
+    public String getRoleToRequestUnlimitedCard() {
+        List<String> roles = getSubmitAsRoles();
+        if (roles.contains("GRANT_OWNER")) {
+            return "GRANT_OWNER";
+        } else if (roles.contains("STUDENT") && canRequestUnlimitedCard(((Person) getParty()).getStudent())) {
+            return "STUDENT";
         }
         return null;
     }
@@ -728,7 +744,7 @@ public class ParkingParty extends ParkingParty_Base {
     }
 
     public boolean canRequestUnlimitedCard(Student student) {
-        if (student != null && student.getPerson().getPersonRole(RoleType.STUDENT) != null) {
+        if (student != null && RoleType.STUDENT.isMember(student.getPerson().getUser())) {
             for (PhdIndividualProgramProcess phdIndividualProgramProcess : student.getPerson()
                     .getPhdIndividualProgramProcessesSet()) {
                 if (phdIndividualProgramProcess.getActiveState().isPhdActive()) {

@@ -23,23 +23,25 @@ import java.io.InputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sourceforge.fenixedu.applicationTier.Servico.commons.ExecuteFactoryMethod;
-import net.sourceforge.fenixedu.domain.exceptions.DomainException;
-import net.sourceforge.fenixedu.domain.organizationalStructure.Party;
-import net.sourceforge.fenixedu.presentationTier.Action.base.FenixDispatchAction;
-import net.sourceforge.fenixedu.presentationTier.Action.exceptions.FenixActionException;
-import net.sourceforge.fenixedu.presentationTier.Action.person.PersonApplication.PersonalAreaApp;
-
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.DynaActionForm;
+import org.fenixedu.academic.domain.exceptions.DomainException;
+import org.fenixedu.academic.domain.organizationalStructure.Party;
+import org.fenixedu.academic.service.services.commons.ExecuteFactoryMethod;
+import org.fenixedu.academic.ui.struts.action.base.FenixDispatchAction;
+import org.fenixedu.academic.ui.struts.action.exceptions.FenixActionException;
+import org.fenixedu.academic.ui.struts.action.person.PersonApplication.PersonalAreaApp;
 import org.fenixedu.bennu.core.domain.User;
 import org.fenixedu.bennu.core.security.Authenticate;
-import org.fenixedu.bennu.portal.EntryPoint;
-import org.fenixedu.bennu.portal.StrutsFunctionality;
+import org.fenixedu.bennu.struts.annotations.Forward;
+import org.fenixedu.bennu.struts.annotations.Forwards;
+import org.fenixedu.bennu.struts.annotations.Mapping;
+import org.fenixedu.bennu.struts.portal.EntryPoint;
+import org.fenixedu.bennu.struts.portal.StrutsFunctionality;
 import org.fenixedu.parking.domain.DocumentDeliveryType;
 import org.fenixedu.parking.domain.ParkingDocumentState;
 import org.fenixedu.parking.domain.ParkingFile;
@@ -52,9 +54,6 @@ import org.fenixedu.parking.domain.ParkingRequestPeriod;
 import org.fenixedu.parking.domain.ParkingRequestState;
 
 import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
-import pt.ist.fenixWebFramework.struts.annotations.Forward;
-import pt.ist.fenixWebFramework.struts.annotations.Forwards;
-import pt.ist.fenixWebFramework.struts.annotations.Mapping;
 import pt.ist.fenixframework.Atomic;
 
 import com.google.common.io.ByteStreams;

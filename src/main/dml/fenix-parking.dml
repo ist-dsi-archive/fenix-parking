@@ -9,11 +9,10 @@ enum org.fenixedu.parking.domain.ParkingDocumentState                           
 enum org.fenixedu.parking.domain.ParkingDocumentType                                                          as ParkingDocumentType;
 enum org.fenixedu.parking.domain.ParkingRequestState                                                          as ParkingRequestState;
 enum org.fenixedu.parking.domain.ParkingRequestType                                                           as ParkingRequestType;
-
 /* 
  * -------------------------------------------------------------------------------------------------
  */
-        class ParkingFile extends .net.sourceforge.fenixedu.domain.File {
+        class ParkingFile extends .org.fenixedu.academic.domain.File {
         }
 
 /* 
@@ -46,7 +45,7 @@ enum org.fenixedu.parking.domain.ParkingRequestType                             
         ParkingDocumentState secondCarOwnerIdDocumentState;
         ParkingDocumentState secondCarPropertyRegistryDocumentState;
         String notes;
-        RoleType requestedAs;
+        String requestedAs;
         Integer usedNumber;
     }
     
@@ -56,7 +55,7 @@ enum org.fenixedu.parking.domain.ParkingRequestType                             
         Long cardNumber;
         Integer phdNumber;
         String notes;
-        RoleType requestedAs;
+        String requestedAs;
         Integer usedNumber;
         DateTime historyDate;
         Boolean onlineRequest;
@@ -76,7 +75,7 @@ enum org.fenixedu.parking.domain.ParkingRequestType                             
         String note;
         ParkingRequestState parkingRequestState;
         String phone;
-        RoleType requestedAs;
+        String requestedAs;
         ParkingDocumentState secondCarDeclarationDocumentState;
         ParkingDocumentState secondCarInsuranceDocumentState;
         ParkingDocumentState secondCarOwnerIdDocumentState;
@@ -101,7 +100,7 @@ enum org.fenixedu.parking.domain.ParkingRequestType                             
 /* 
  * -------------------------------------------------------------------------------------------------
  */
-class reports.ParkingDataReportFile extends .net.sourceforge.fenixedu.domain.QueueJobWithFile {
+class reports.ParkingDataReportFile extends .org.fenixedu.academic.domain.QueueJobWithFile {
 }
 
 /* 
@@ -137,7 +136,7 @@ relation ParkingRequestParkingParty {
 }
 
 relation PartyParkingHistoryParty {
-    .net.sourceforge.fenixedu.domain.organizationalStructure.Party playsRole party;
+    .org.fenixedu.academic.domain.organizationalStructure.Party playsRole party;
     ParkingPartyHistory playsRole parkingPartyHistories {
         multiplicity *;
     }
@@ -155,7 +154,7 @@ relation ParkingPartyHistoryParkingGroup {
  */
 
 relation PartyParkingParty {
-    .net.sourceforge.fenixedu.domain.organizationalStructure.Party playsRole party;
+    .org.fenixedu.academic.domain.organizationalStructure.Party playsRole party;
     ParkingParty playsRole parkingParty;
 }
 

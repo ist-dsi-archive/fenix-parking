@@ -35,27 +35,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sourceforge.fenixedu.applicationTier.Servico.commons.ExecuteFactoryMethod;
-import net.sourceforge.fenixedu.applicationTier.Servico.exceptions.FenixServiceException;
-import net.sourceforge.fenixedu.domain.ExecutionSemester;
-import net.sourceforge.fenixedu.domain.Person;
-import net.sourceforge.fenixedu.domain.Photograph;
-import net.sourceforge.fenixedu.domain.StudentCurricularPlan;
-import net.sourceforge.fenixedu.domain.contacts.EmailAddress;
-import net.sourceforge.fenixedu.domain.degree.DegreeType;
-import net.sourceforge.fenixedu.domain.organizationalStructure.Party;
-import net.sourceforge.fenixedu.domain.person.RoleType;
-import net.sourceforge.fenixedu.domain.personnelSection.contracts.PersonContractSituation;
-import net.sourceforge.fenixedu.domain.student.Registration;
-import net.sourceforge.fenixedu.domain.teacher.CategoryType;
-import net.sourceforge.fenixedu.domain.util.email.ConcreteReplyTo;
-import net.sourceforge.fenixedu.domain.util.email.Message;
-import net.sourceforge.fenixedu.domain.util.email.Sender;
-import net.sourceforge.fenixedu.presentationTier.Action.base.FenixDispatchAction;
-import net.sourceforge.fenixedu.presentationTier.Action.exceptions.FenixActionException;
-import net.sourceforge.fenixedu.util.ContentType;
-import net.sourceforge.fenixedu.util.report.ReportsUtils;
-
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.util.Region;
@@ -65,9 +44,31 @@ import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.DynaActionForm;
+import org.fenixedu.academic.domain.ExecutionSemester;
+import org.fenixedu.academic.domain.Person;
+import org.fenixedu.academic.domain.Photograph;
+import org.fenixedu.academic.domain.StudentCurricularPlan;
+import org.fenixedu.academic.domain.contacts.EmailAddress;
+import org.fenixedu.academic.domain.degree.DegreeType;
+import org.fenixedu.academic.domain.organizationalStructure.Party;
+import org.fenixedu.academic.domain.person.RoleType;
+import org.fenixedu.academic.domain.student.Registration;
+import org.fenixedu.academic.domain.util.email.ConcreteReplyTo;
+import org.fenixedu.academic.domain.util.email.Message;
+import org.fenixedu.academic.domain.util.email.Sender;
+import org.fenixedu.academic.service.services.commons.ExecuteFactoryMethod;
+import org.fenixedu.academic.service.services.exceptions.FenixServiceException;
+import org.fenixedu.academic.ui.struts.action.base.FenixDispatchAction;
+import org.fenixedu.academic.ui.struts.action.exceptions.FenixActionException;
+import org.fenixedu.academic.util.ContentType;
+import org.fenixedu.academic.util.report.ReportPrinter.ReportResult;
+import org.fenixedu.academic.util.report.ReportsUtils;
 import org.fenixedu.bennu.core.domain.Bennu;
-import org.fenixedu.bennu.portal.EntryPoint;
-import org.fenixedu.bennu.portal.StrutsFunctionality;
+import org.fenixedu.bennu.struts.annotations.Forward;
+import org.fenixedu.bennu.struts.annotations.Forwards;
+import org.fenixedu.bennu.struts.annotations.Mapping;
+import org.fenixedu.bennu.struts.portal.EntryPoint;
+import org.fenixedu.bennu.struts.portal.StrutsFunctionality;
 import org.fenixedu.commons.StringNormalizer;
 import org.fenixedu.commons.i18n.I18N;
 import org.fenixedu.parking.domain.ParkingGroup;
@@ -84,9 +85,9 @@ import org.joda.time.DateTime;
 
 import pt.ist.fenixWebFramework.renderers.components.state.IViewState;
 import pt.ist.fenixWebFramework.renderers.utils.RenderUtils;
-import pt.ist.fenixWebFramework.struts.annotations.Forward;
-import pt.ist.fenixWebFramework.struts.annotations.Forwards;
-import pt.ist.fenixWebFramework.struts.annotations.Mapping;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.PersonContractSituation;
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.ProfessionalCategory;
+import pt.ist.fenixedu.contracts.domain.util.CategoryType;
 import pt.ist.fenixframework.Atomic;
 import pt.ist.fenixframework.FenixFramework;
 import pt.utl.ist.fenix.tools.util.excel.StyledExcelSpreadsheet;
@@ -180,7 +181,8 @@ public class ParkingManagerDispatchAction extends FenixDispatchAction {
 
         if (parkingRequest.getParkingParty().getParty().isPerson()) {
             Person person = (Person) parkingRequest.getParkingParty().getParty();
-            if (person.getTeacher() != null && person.getTeacher().isMonitor(ExecutionSemester.readActualExecutionSemester())) {
+            if (person.getTeacher() != null
+                    && ProfessionalCategory.isMonitor(person.getTeacher(), ExecutionSemester.readActualExecutionSemester())) {
                 request.setAttribute("monitor", "true");
             }
         }
@@ -382,9 +384,10 @@ public class ParkingManagerDispatchAction extends FenixDispatchAction {
         List<Person> persons = new ArrayList<Person>();
         persons.add(person);
 
-        byte[] data = ReportsUtils.exportToPdfFileAsByteArray("parkingManager.parkingCard", parameters, persons);
-        response.setContentType("application/pdf");
-        response.addHeader("Content-Disposition", "attachment; filename=cartao.pdf");
+        ReportResult report = ReportsUtils.generateReport("parkingManager.parkingCard", parameters, persons);
+        byte[] data = report.getData();
+        response.setContentType(report.getContentType());
+        response.addHeader("Content-Disposition", "attachment; filename=cartao." + report.getFileExtension());
         response.setContentLength(data.length);
         ServletOutputStream writer = response.getOutputStream();
         writer.write(data);
@@ -398,9 +401,9 @@ public class ParkingManagerDispatchAction extends FenixDispatchAction {
     private String getMostSignificantNumberString(Person person, ParkingGroup parkingGroup) {
         Integer number = getMostSignificantNumber(person, parkingGroup);
         if (number != null) {
-            if ((person.getTeacher() != null && person.getTeacher().getCurrentWorkingDepartment() != null)
-                    || (person.getEmployee() != null && person.getEmployee().getCurrentWorkingContract() != null && person
-                            .getPersonRole(RoleType.TEACHER) == null)) {
+            if ((person.getTeacher() != null && person.getTeacher().getDepartment() != null)
+                    || (person.getEmployee() != null && person.getEmployee().getCurrentWorkingContract() != null && !RoleType.TEACHER
+                            .isMember(person.getUser()))) {
                 return "Nº Mec: " + number;
             } else {
                 return "Nº" + number;
@@ -413,13 +416,13 @@ public class ParkingManagerDispatchAction extends FenixDispatchAction {
         if (person.getParkingParty().getPhdNumber() != null) {
             return person.getParkingParty().getPhdNumber();
         }
-        if (person.getTeacher() != null && person.getTeacher().getCurrentWorkingDepartment() != null
-                && !person.getTeacher().isMonitor(ExecutionSemester.readActualExecutionSemester())
+        if (person.getTeacher() != null && person.getTeacher().getDepartment() != null
+                && !ProfessionalCategory.isMonitor(person.getTeacher(), ExecutionSemester.readActualExecutionSemester())
                 && person.getEmployee() != null) {
             return person.getEmployee().getEmployeeNumber();
         }
         if (person.getEmployee() != null && person.getEmployee().getCurrentWorkingContract() != null
-                && person.getPersonRole(RoleType.TEACHER) == null) {
+                && !RoleType.TEACHER.isMember(person.getUser())) {
             return person.getEmployee().getEmployeeNumber();
         }
         if (person.getStudent() != null && !parkingGroup.getGroupName().equalsIgnoreCase("Bolseiros")) {
@@ -432,7 +435,7 @@ public class ParkingManagerDispatchAction extends FenixDispatchAction {
                 }
             }
         }
-        if (person.getPersonRole(RoleType.GRANT_OWNER) != null && person.getEmployee() != null) {
+        if (person.getEmployee() != null) {
             PersonContractSituation currentGrantOwnerContractSituation =
                     person.getPersonProfessionalData() != null ? person.getPersonProfessionalData()
                             .getCurrentPersonContractSituationByCategoryType(CategoryType.GRANT_OWNER) : null;
@@ -440,8 +443,9 @@ public class ParkingManagerDispatchAction extends FenixDispatchAction {
                 return person.getEmployee().getEmployeeNumber();
             }
         }
-        if (person.getTeacher() != null && person.getTeacher().getCurrentWorkingDepartment() != null
-                && person.getTeacher().isMonitor(ExecutionSemester.readActualExecutionSemester()) && person.getEmployee() != null) {
+        if (person.getTeacher() != null && person.getTeacher().getDepartment() != null
+                && ProfessionalCategory.isMonitor(person.getTeacher(), ExecutionSemester.readActualExecutionSemester())
+                && person.getEmployee() != null) {
             return person.getEmployee().getEmployeeNumber();
         }
 
