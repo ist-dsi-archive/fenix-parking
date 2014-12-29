@@ -4,12 +4,12 @@
     <parent>
         <groupId>org.fenixedu</groupId>
         <artifactId>fenix-framework-project</artifactId>
-        <version>2.0.1</version>
+        <version>2.2.0</version>
     </parent>
 
     <groupId>pt.ist</groupId>
     <artifactId>fenix-parking</artifactId>
-    <version>1.0.3</version>
+    <version>2.0.0-SNAPSHOT</version>
     <inceptionYear>2014</inceptionYear>
 
     <name>Fenix Parking</name>
@@ -17,7 +17,6 @@
     <description>IST Parking Features for FenixEdu</description>
 
     <properties>
-        <jasper.threads>1</jasper.threads>
         <skipTests>true</skipTests>
     </properties>
 
@@ -43,7 +42,7 @@
         <connection>scm:git:git@github.com:ist-dsi/fenix-parking.git</connection>
         <developerConnection>scm:git:git@github.com:ist-dsi/fenix-parking.git</developerConnection>
         <url>http://fenixedu.org</url>
-        <tag>v1.0.3</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <build>
@@ -57,60 +56,24 @@
                     <meminitial>1536</meminitial>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>com.alexnederlof</groupId>
-                <artifactId>jasperreports-plugin</artifactId>
-                <version>1.5.0</version>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>jasper</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>net.sf.jasperreports</groupId>
-                        <artifactId>jasperreports</artifactId>
-                        <version>3.6.0</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>log4j</groupId>
-                        <artifactId>log4j</artifactId>
-                        <version>1.2.16</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <compiler>net.sourceforge.fenixedu.util.report.FenixJasperCompiler</compiler>
-                    <outputDirectory>${project.build.outputDirectory}/reports</outputDirectory>
-                    <numberOfThreads>${jasper.threads}</numberOfThreads>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
     <dependencies>
         <dependency>
-            <groupId>pt.ist</groupId>
-            <artifactId>fenix</artifactId>
-            <version>3.3.2</version>
+            <groupId>org.fenixedu</groupId>
+            <artifactId>fenixedu-academic</artifactId>
+            <version>4.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.fenixedu</groupId>
             <artifactId>fenixedu-id-cards</artifactId>
-            <version>1.0.0</version>
+            <version>2.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>net.sf.jasperreports</groupId>
-            <artifactId>jasperreports</artifactId>
-            <version>3.6.0</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>jdtcore</artifactId>
-                    <groupId>eclipse</groupId>
-                </exclusion>
-            </exclusions>
+            <groupId>pt.ist</groupId>
+            <artifactId>fenixedu-ist-giaf-contracts</artifactId>
+            <version>4.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.healthmarketscience.jackcess</groupId>
@@ -121,9 +84,8 @@
 
     <repositories>
         <repository>
-            <id>fenix-ashes-maven-repository</id>
-            <url>https://fenix-ashes.ist.utl.pt/nexus/content/groups/fenix-ashes-maven-repository</url>
+            <id>fenixedu-maven-repository</id>
+            <url>https://repo.fenixedu.org/fenixedu-maven-repository</url>
         </repository>
     </repositories>
-
 </project>

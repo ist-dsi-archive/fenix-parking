@@ -26,18 +26,14 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
-import net.sourceforge.fenixedu.domain.PartyClassification;
-import net.sourceforge.fenixedu.domain.Person;
-import net.sourceforge.fenixedu.domain.accessControl.RoleGroup;
-import net.sourceforge.fenixedu.domain.contacts.EmailAddress;
-import net.sourceforge.fenixedu.domain.contacts.MobilePhone;
-import net.sourceforge.fenixedu.domain.contacts.Phone;
-import net.sourceforge.fenixedu.domain.organizationalStructure.Party;
-import net.sourceforge.fenixedu.domain.person.RoleType;
-import net.sourceforge.fenixedu.domain.util.FactoryExecutor;
-import net.sourceforge.fenixedu.util.ByteArray;
-
+import org.fenixedu.academic.domain.Person;
+import org.fenixedu.academic.domain.contacts.EmailAddress;
+import org.fenixedu.academic.domain.contacts.MobilePhone;
+import org.fenixedu.academic.domain.contacts.Phone;
+import org.fenixedu.academic.domain.organizationalStructure.Party;
+import org.fenixedu.academic.service.services.commons.FactoryExecutor;
 import org.fenixedu.bennu.core.domain.Bennu;
+import org.fenixedu.bennu.core.groups.DynamicGroup;
 import org.fenixedu.bennu.core.groups.Group;
 import org.fenixedu.bennu.core.groups.UserGroup;
 import org.fenixedu.commons.i18n.I18N;
@@ -47,6 +43,8 @@ import org.slf4j.LoggerFactory;
 
 import pt.ist.fenixframework.FenixFramework;
 import pt.utl.ist.fenix.tools.util.FileUtils;
+
+import com.google.common.io.ByteStreams;
 
 public class ParkingRequest extends ParkingRequest_Base {
 
@@ -76,9 +74,9 @@ public class ParkingRequest extends ParkingRequest_Base {
         setRequestedAs(creator.getRequestAs() != null ? creator.getRequestAs() : creator.getParkingParty().getSubmitAsRoles()
                 .iterator().next());
         boolean limitlessAccessCard = creator.isLimitlessAccessCard();
+        PartyClassification classification = PartyClassification.getPartyClassification(creator.getParkingParty().getParty());
         if (limitlessAccessCard == false
-                && (creator.getParkingParty().getParty().getPartyClassification().equals(PartyClassification.TEACHER) || creator
-                        .getParkingParty().getParty().getPartyClassification().equals(PartyClassification.EMPLOYEE))) {
+                && (classification.equals(PartyClassification.TEACHER) || classification.equals(PartyClassification.EMPLOYEE))) {
             limitlessAccessCard = true;
         }
         setLimitlessAccessCard(limitlessAccessCard);
@@ -104,7 +102,7 @@ public class ParkingRequest extends ParkingRequest_Base {
         if (defaultEmailAddress != null) {
             setEmail(defaultEmailAddress.getValue());
         }
-        RoleType requestedAs = oldParkingRequest.getRequestedAs();
+        String requestedAs = oldParkingRequest.getRequestedAs();
         if (requestedAs == null) {
             requestedAs = oldParkingRequest.getParkingParty().getRoleToRequestUnlimitedCard();
         }
@@ -225,7 +223,7 @@ public class ParkingRequest extends ParkingRequest_Base {
 
         DocumentDeliveryType secondCarDeclarationDeliveryType;
 
-        RoleType requestAs;
+        String requestAs;
 
         boolean limitlessAccessCard;
 
@@ -497,7 +495,7 @@ public class ParkingRequest extends ParkingRequest_Base {
             }
             if (documentDeliveryType == DocumentDeliveryType.ELECTRONIC_DELIVERY && inputStream != null) {
                 final Group group = getGroup(vehicle.getParkingRequest().getParkingParty().getParty());
-                final ParkingFile parkingFile = new ParkingFile(filename, filename, new ByteArray(inputStream).getBytes(), group);
+                final ParkingFile parkingFile = new ParkingFile(filename, filename, ByteStreams.toByteArray(inputStream), group);
                 new NewParkingDocument(parkingDocumentType, parkingFile, vehicle);
             }
         }
@@ -514,14 +512,14 @@ public class ParkingRequest extends ParkingRequest_Base {
             if (documentDeliveryType == DocumentDeliveryType.ELECTRONIC_DELIVERY && getDriverLicenseInputStream() != null) {
                 final Group group = getGroup(getParkingParty().getParty());
                 final ParkingFile parkingFile =
-                        new ParkingFile(filename, filename, new ByteArray(getDriverLicenseInputStream()).getBytes(), group);
+                        new ParkingFile(filename, filename, ByteStreams.toByteArray(getDriverLicenseInputStream()), group);
                 new NewParkingDocument(NewParkingDocumentType.DRIVER_LICENSE, parkingFile, parkingRequest);
             }
         }
 
         private Group getGroup(Party party) {
             final Group personGroup = UserGroup.of(((Person) party).getUser());
-            final Group roleGroup = RoleGroup.get(RoleType.PARKING_MANAGER);
+            final Group roleGroup = DynamicGroup.get("parkingManager");
             return personGroup.or(roleGroup);
         }
 
@@ -597,11 +595,11 @@ public class ParkingRequest extends ParkingRequest_Base {
             this.secondInsuranceFileSize = secondInsuranceFileSize;
         }
 
-        public RoleType getRequestAs() {
+        public String getRequestAs() {
             return requestAs;
         }
 
-        public void setRequestAs(RoleType requestAs) {
+        public void setRequestAs(String requestAs) {
             this.requestAs = requestAs;
         }
 

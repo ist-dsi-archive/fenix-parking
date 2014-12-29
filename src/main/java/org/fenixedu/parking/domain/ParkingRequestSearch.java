@@ -23,17 +23,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import net.sourceforge.fenixedu.domain.ExecutionSemester;
-import net.sourceforge.fenixedu.domain.PartyClassification;
-import net.sourceforge.fenixedu.domain.Person;
-import net.sourceforge.fenixedu.domain.Teacher;
-import net.sourceforge.fenixedu.domain.degree.DegreeType;
-import net.sourceforge.fenixedu.domain.person.RoleType;
-import net.sourceforge.fenixedu.domain.phd.PhdIndividualProgramProcess;
-import net.sourceforge.fenixedu.domain.student.Student;
-import net.sourceforge.fenixedu.util.FenixStringTools;
-
+import org.fenixedu.academic.domain.ExecutionSemester;
+import org.fenixedu.academic.domain.Person;
+import org.fenixedu.academic.domain.Teacher;
+import org.fenixedu.academic.domain.degree.DegreeType;
+import org.fenixedu.academic.domain.person.RoleType;
+import org.fenixedu.academic.domain.phd.PhdIndividualProgramProcess;
+import org.fenixedu.academic.domain.student.Student;
+import org.fenixedu.academic.util.FenixStringTools;
 import org.fenixedu.bennu.core.domain.Bennu;
+
+import pt.ist.fenixedu.contracts.domain.personnelSection.contracts.ProfessionalCategory;
 
 public class ParkingRequestSearch implements Serializable {
     private ParkingRequestState parkingRequestState;
@@ -136,10 +136,11 @@ public class ParkingRequestSearch implements Serializable {
                     }
                 }
                 return student.getActiveRegistrationByDegreeType(degreeType) != null;
-            } else if (parkingParty.getParty().getPartyClassification() == getPartyClassification()) {
+            } else if (PartyClassification.getPartyClassification(parkingParty.getParty()) == getPartyClassification()) {
                 if (getPartyClassification() == PartyClassification.TEACHER) {
                     final Teacher teacher = ((Person) parkingParty.getParty()).getTeacher();
-                    return teacher == null || !teacher.isMonitor(ExecutionSemester.readActualExecutionSemester());
+                    return teacher == null
+                            || !ProfessionalCategory.isMonitor(teacher, ExecutionSemester.readActualExecutionSemester());
                 }
             } else {
                 return false;

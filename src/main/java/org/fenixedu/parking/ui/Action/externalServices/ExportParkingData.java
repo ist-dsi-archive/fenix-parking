@@ -25,18 +25,16 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sourceforge.fenixedu.domain.QueueJob;
-import net.sourceforge.fenixedu.presentationTier.Action.base.FenixAction;
-
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.fenixedu.academic.domain.QueueJob;
+import org.fenixedu.academic.ui.struts.action.base.FenixAction;
 import org.fenixedu.bennu.core.domain.Bennu;
+import org.fenixedu.bennu.struts.annotations.Mapping;
 import org.fenixedu.parking.ParkingConfigurationManager;
 import org.fenixedu.parking.domain.reports.ParkingDataReportFile;
-
-import pt.ist.fenixWebFramework.struts.annotations.Mapping;
 
 import com.google.common.collect.Ordering;
 
