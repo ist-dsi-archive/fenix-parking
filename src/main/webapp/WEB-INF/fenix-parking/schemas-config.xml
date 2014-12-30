@@ -21,7 +21,7 @@
 <schemas>
 
 <schema name="viewPersonInfo"
-	type="net.sourceforge.fenixedu.domain.organizationalStructure.Party">
+	type="org.fenixedu.academic.domain.organizationalStructure.Party">
 	<slot name="name" key="label.name" bundle="PARKING_RESOURCES" layout="null-as-label">
 		<property name="label" value="-"/>
 	</slot>
@@ -357,7 +357,7 @@
 
 <schema name="edit.parkingPartyBean.user" type="org.fenixedu.parking.dto.ParkingPartyBean">
 	<slot name="cardNumber" key="label.cardNumber">
-		<validator class="net.sourceforge.fenixedu.presentationTier.renderers.validators.LongRangeValidator">
+		<validator class="org.fenixedu.academic.ui.renderers.validators.LongRangeValidator">
 			<property name="lowerBound" value="0"/>
 		</validator>
 		<validator class="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator"/>
@@ -367,7 +367,7 @@
 		<property name="format" value="${groupName}"/>
 	</slot>
 	<slot name="phdNumber" key="label.phdNumber"/>
-	<slot name="email" key="label.email" validator="net.sourceforge.fenixedu.presentationTier.renderers.validators.NotRequiredEmailValidator">
+	<slot name="email" key="label.email" validator="org.fenixedu.academic.ui.renderers.validators.NotRequiredEmailValidator">
 		<property name="size" value="30"/>
 		<property name="maxLength" value="100"/>
 	</slot>
@@ -379,8 +379,8 @@
 </schema>
 
 <schema name="edit.parkingPartyBean.cardValidPeriod" type="org.fenixedu.parking.dto.ParkingPartyBean">
-	<slot name="cardStartDate" key="label.cardStartDate" validator="net.sourceforge.fenixedu.presentationTier.renderers.validators.DateTimeValidator"/>
-	<slot name="cardEndDate" key="label.cardEndDate" validator="net.sourceforge.fenixedu.presentationTier.renderers.validators.DateTimeValidator"/>
+	<slot name="cardStartDate" key="label.cardStartDate" validator="org.fenixedu.academic.ui.renderers.validators.DateTimeValidator"/>
+	<slot name="cardEndDate" key="label.cardEndDate" validator="org.fenixedu.academic.ui.renderers.validators.DateTimeValidator"/>
 </schema>
 
 <schema name="show.parkingParty.cardValidPeriod" type="org.fenixedu.parking.domain.ParkingParty">
@@ -443,7 +443,7 @@
 </schema>
 
 <schema name="search.party.autocomplete" type="org.fenixedu.parking.dto.SearchParkingPartyBean" bundle="PARKING_RESOURCES">
-	<slot name="party" layout="autoComplete" validator="net.sourceforge.fenixedu.presentationTier.renderers.validators.RequiredAutoCompleteSelectionValidator" key="label.name">
+	<slot name="party" layout="autoComplete" validator="org.fenixedu.academic.ui.renderers.validators.RequiredAutoCompleteSelectionValidator" key="label.name">
 		<property name="provider" value="net.sourceforge.fenixedu.applicationTier.Servico.commons.SearchUnits"/>
 		<property name="args" value="slot=name,size=20"/>
 		<property name="size" value="50"/>
@@ -464,7 +464,7 @@
 	<slot name="parkingCardNumber" key="label.cardNumber"/>
 </schema>
 
-<schema name="read.msAccessFile" type="net.sourceforge.fenixedu.dataTransferObject.commons.OpenFileBean">
+<schema name="read.msAccessFile" type="org.fenixedu.idcards.ui.OpenFileBean">
 	<slot name="inputStream" key="label.msAccessFile" bundle="PARKING_RESOURCES" validator="pt.ist.fenixWebFramework.renderers.validators.RequiredValidator">
 		<property name="size" value="50"/>
 		<property name="fileNameSlot" value="fileName"/>
@@ -473,8 +473,8 @@
 
 <schema name="show.parkingRequestPeriod" type="org.fenixedu.parking.domain.ParkingRequestPeriod" 
 	constructor="beginDate, endDate">
-	<slot name="beginDate" validator="net.sourceforge.fenixedu.presentationTier.renderers.validators.DateTimeValidator"/>
-	<slot name="endDate" validator="net.sourceforge.fenixedu.presentationTier.renderers.validators.DateTimeValidator"/>
+	<slot name="beginDate" validator="org.fenixedu.academic.ui.renderers.validators.DateTimeValidator"/>
+	<slot name="endDate" validator="org.fenixedu.academic.ui.renderers.validators.DateTimeValidator"/>
 	<setter signature="editParkingRequestPeriod(beginDate,endDate)"/>
 </schema>
 
@@ -534,7 +534,7 @@
 
 <schema name="edit.cardsRenewalDate" type="org.fenixedu.parking.dto.ParkingCardSearchBean">
 	<slot name="renewalEndDate" key="label.renewalEndDate">
-		<validator class="net.sourceforge.fenixedu.presentationTier.renderers.validators.DateTimeValidator">
+		<validator class="org.fenixedu.academic.ui.renderers.validators.DateTimeValidator">
 			<property name="required" value="false"/>
 		</validator>
 	</slot>
