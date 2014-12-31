@@ -21,7 +21,7 @@ package org.fenixedu.parking.ui.Action;
 import org.fenixedu.bennu.struts.portal.StrutsApplication;
 
 @StrutsApplication(bundle = "ParkingResources", path = "parking-manager", titleKey = "label.parking",
-        accessGroup = "role(PARKING_MANAGER)", hint = "Parking Manager")
+        accessGroup = "#parkingManager", hint = "Parking Manager")
 public class ParkingManagerApp {
 
 }
