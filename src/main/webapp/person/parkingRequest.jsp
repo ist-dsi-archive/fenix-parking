@@ -24,7 +24,7 @@
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic"%>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean"%>
 <%@ page
-	import="net.sourceforge.fenixedu.presentationTier.Action.resourceAllocationManager.utils.PresentationConstants"%>
+	import="org.fenixedu.academic.ui.struts.action.resourceAllocationManager.utils.PresentationConstants"%>
 
 <h2><bean:message key="label.parking" bundle="PARKING_RESOURCES" /></h2>
 
@@ -48,8 +48,8 @@
 		<logic:notEqual name="parkingParty"	property="hasAllNecessaryPersonalInfo" value="false">
 			<p>
 				<bean:message key="label.read.parkingRegulation" bundle="PARKING_RESOURCES" />: 
-				<a href="<%= net.sourceforge.fenixedu.domain.Installation.getInstance().getInstituitionURL() %>files/viver-IST/gestao-estacionamento/reg_estac.pdf" target="_blank">
-					<bean:message key="label.parkingRegulation" arg0="<%=net.sourceforge.fenixedu.domain.organizationalStructure.Unit.getInstitutionAcronym()%>" bundle="PARKING_RESOURCES" />
+				<a href="<%= org.fenixedu.academic.domain.Installation.getInstance().getInstituitionURL() %>files/viver-IST/gestao-estacionamento/reg_estac.pdf" target="_blank">
+					<bean:message key="label.parkingRegulation" arg0="<%=org.fenixedu.academic.domain.organizationalStructure.Unit.getInstitutionAcronym()%>" bundle="PARKING_RESOURCES" />
 					<bean:message key="label.parkingRegulation.pdf" bundle="PARKING_RESOURCES" />
 				</a>
 			</p>
@@ -57,8 +57,8 @@
 
 			<logic:equal name="parkingParty" property="acceptedRegulation" value="false">				
 				<div class="mvert1 infoop2">
-					<p class="mvert05"><bean:message key="message.acceptRegulationCondition" arg0="<%=net.sourceforge.fenixedu.domain.organizationalStructure.Unit.getInstitutionAcronym()%>" bundle="PARKING_RESOURCES" /></p>
-					<p class="mvert05"><bean:message key="message.acceptRegulation" arg0="<%=net.sourceforge.fenixedu.domain.organizationalStructure.Unit.getInstitutionAcronym()%>" bundle="PARKING_RESOURCES" /></p>
+					<p class="mvert05"><bean:message key="message.acceptRegulationCondition" arg0="<%=org.fenixedu.academic.domain.organizationalStructure.Unit.getInstitutionAcronym()%>" bundle="PARKING_RESOURCES" /></p>
+					<p class="mvert05"><bean:message key="message.acceptRegulation" arg0="<%=org.fenixedu.academic.domain.organizationalStructure.Unit.getInstitutionAcronym()%>" bundle="PARKING_RESOURCES" /></p>
 					<p class="mvert05">
 						<strong>
 							<html:link page="/personParking.do?method=acceptRegulation">
@@ -90,8 +90,8 @@
 	<logic:notEmpty name="parkingParty" property="parkingRequestsSet">
 		<p>
 			<bean:message key="label.read.parkingRegulation" bundle="PARKING_RESOURCES" />: 
-			<a href="<%= net.sourceforge.fenixedu.domain.Installation.getInstance().getInstituitionURL() %>files/viver-IST/gestao-estacionamento/reg_estac.pdf" target="_blank">
-				<bean:message key="label.parkingRegulation" arg0="<%=net.sourceforge.fenixedu.domain.organizationalStructure.Unit.getInstitutionAcronym()%>" bundle="PARKING_RESOURCES" />
+			<a href="<%= org.fenixedu.academic.domain.Installation.getInstance().getInstituitionURL() %>files/viver-IST/gestao-estacionamento/reg_estac.pdf" target="_blank">
+				<bean:message key="label.parkingRegulation" arg0="<%=org.fenixedu.academic.domain.organizationalStructure.Unit.getInstitutionAcronym()%>" bundle="PARKING_RESOURCES" />
 				<bean:message key="label.parkingRegulation.pdf" bundle="PARKING_RESOURCES" />
 			</a>
 		</p>
@@ -122,7 +122,7 @@
 		<%-- editar --%>
 		<logic:equal name="canEdit" value="true">
 			<p>
-				<div class="infoop2"><bean:message key="message.pendingParkingRequestState" arg0="<%=net.sourceforge.fenixedu.domain.organizationalStructure.Unit.getInstitutionAcronym()%>" bundle="PARKING_RESOURCES" /></div>
+				<div class="infoop2"><bean:message key="message.pendingParkingRequestState" arg0="<%=org.fenixedu.academic.domain.organizationalStructure.Unit.getInstitutionAcronym()%>" bundle="PARKING_RESOURCES" /></div>
 			</p>
 			<p>
 				<html:link page="/personParking.do?method=prepareEditParking">

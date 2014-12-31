@@ -94,7 +94,7 @@
 	<slot name="email" key="label.email" bundle="PARKING_RESOURCES" />
 </schema>
 
-<schema name="view.partyName" type="net.sourceforge.fenixedu.domain.organizationalStructure.Party" bundle="PARKING_RESOURCES">
+<schema name="view.partyName" type="org.fenixedu.academic.domain.organizationalStructure.Party" bundle="PARKING_RESOURCES">
 	<slot name="name" key="label.name"/>
 </schema>
 
@@ -444,7 +444,7 @@
 
 <schema name="search.party.autocomplete" type="org.fenixedu.parking.dto.SearchParkingPartyBean" bundle="PARKING_RESOURCES">
 	<slot name="party" layout="autoComplete" validator="org.fenixedu.academic.ui.renderers.validators.RequiredAutoCompleteSelectionValidator" key="label.name">
-		<property name="provider" value="net.sourceforge.fenixedu.applicationTier.Servico.commons.SearchUnits"/>
+		<property name="provider" value="org.fenixedu.academic.service.services.commons.SearchUnits"/>
 		<property name="args" value="slot=name,size=20"/>
 		<property name="size" value="50"/>
 		<property name="labelField" value="name"/>

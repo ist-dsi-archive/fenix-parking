@@ -255,7 +255,7 @@
 			<th scope="col"></th>
 		</tr>
 		<logic:iterate id="party" name="partyList">
-			<bean:define id="person" name="party" type="net.sourceforge.fenixedu.domain.Person"/>
+			<bean:define id="person" name="party" type="org.fenixedu.academic.domain.Person"/>
 			<bean:define id="organizationalUnitsPresentation" name="person" property="organizationalUnitsPresentation"/>
 			<bean:size id="numberUnitsTemp" name="person" property="organizationalUnitsPresentation"/>
 			<bean:define id="numberUnits"><bean:write name="numberUnitsTemp"/></bean:define>

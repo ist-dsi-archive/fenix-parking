@@ -81,7 +81,7 @@ function hideCardValidPeriod(toShow){
 		</p>
 	</logic:notEmpty>
 	
-	<bean:define id="person" name="parkingParty" property="party" type="net.sourceforge.fenixedu.domain.Person"/>
+	<bean:define id="person" name="parkingParty" property="party" type="org.fenixedu.academic.domain.Person"/>
 	<logic:notEqual name="person" property="partyClassification" value="TEACHER">
 	<logic:notEqual name="person" property="partyClassification" value="EMPLOYEE">
 		<logic:equal name="parkingRequest" property="limitlessAccessCard" value="false">
