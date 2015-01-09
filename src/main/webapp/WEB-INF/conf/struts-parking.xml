@@ -64,7 +64,7 @@
             </form-bean>
       </form-beans>
       <!-- ========== Controller Configuration ================================ -->
-      <controller processorClass="pt.ist.fenixWebFramework.renderers.plugin.SimpleRenderersRequestProcessor"></controller>
+      <controller processorClass="org.fenixedu.bennu.struts.SimpleRenderersRequestProcessor"></controller>
       <!-- ========== Message Resources Definitions ============================ -->
       <message-resources null="false" parameter="resources.ParkingResources"></message-resources>
       <message-resources null="false" key="PARKING_RESOURCES" parameter="resources.ParkingResources"></message-resources>
