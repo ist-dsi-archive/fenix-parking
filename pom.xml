@@ -63,17 +63,17 @@
         <dependency>
             <groupId>org.fenixedu</groupId>
             <artifactId>fenixedu-academic</artifactId>
-            <version>4.0.1</version>
+            <version>4.0.3</version>
         </dependency>
         <dependency>
             <groupId>org.fenixedu</groupId>
             <artifactId>fenixedu-id-cards</artifactId>
-            <version>2.0.0.RC1</version>
+            <version>2.0.0</version>
         </dependency>
         <dependency>
             <groupId>pt.ist</groupId>
             <artifactId>fenixedu-ist-giaf-contracts</artifactId>
-            <version>4.0.0.RC1</version>
+            <version>4.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.healthmarketscience.jackcess</groupId>
