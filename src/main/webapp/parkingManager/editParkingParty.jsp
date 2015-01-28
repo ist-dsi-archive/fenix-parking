@@ -90,7 +90,7 @@ function addVehicle(){
 		<html:messages id="message" property="vehicleMandatoryData" message="true" bundle="PARKING_RESOURCES"><span class="error0"><bean:write name="message"/></span></html:messages>		
 		<html:messages id="message" property="repeatedPlates" message="true" bundle="PARKING_RESOURCES"><span class="error0"><bean:write name="message"/></span></html:messages>
 		<fr:edit id="vehicle" name="parkingPartyBean" property="vehicles" layout="tabular-editable" schema="edit.vehicleBean">
-			<fr:layout name="tabular">
+			<fr:layout name="tabular-editable">
 				<fr:property name="classes" value="tstyle5 thright thlight mtop05"/>
 				<fr:property name="columnClasses" value=",,tderror1 tdclear"/>
 			</fr:layout>

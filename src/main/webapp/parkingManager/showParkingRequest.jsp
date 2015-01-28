@@ -66,7 +66,7 @@ function hideCardValidPeriod(toShow){
 	
 	<h3><bean:message key="label.parkUserInfo" /></h3>
 	<p>
-		<html:img src="<%= request.getContextPath() +"/parkingManager/parking.do?method=showPhoto&amp;personID="+personID.toString() %>" altKey="personPhoto" bundle="IMAGE_RESOURCES" />
+		<img src="${parkingParty.party.user.profile.avatarUrl}" alt="${parkingParty.party.name}" />
 	</p>
 	<logic:iterate id="occupation" name="parkingParty" property="occupations">
 		<p><bean:write name="occupation" filter="false"/></p>
@@ -82,8 +82,8 @@ function hideCardValidPeriod(toShow){
 	</logic:notEmpty>
 	
 	<bean:define id="person" name="parkingParty" property="party" type="org.fenixedu.academic.domain.Person"/>
-	<logic:notEqual name="person" property="partyClassification" value="TEACHER">
-	<logic:notEqual name="person" property="partyClassification" value="EMPLOYEE">
+	<logic:notEqual name="parkingParty" property="partyClassification" value="TEACHER">
+	<logic:notEqual name="parkingParty" property="partyClassification" value="EMPLOYEE">
 		<logic:equal name="parkingRequest" property="limitlessAccessCard" value="false">
 			<bean:define id="cardTypeRequest"><bean:message key="label.limitedCard" bundle="PARKING_RESOURCES"></bean:message></bean:define>
 		</logic:equal>

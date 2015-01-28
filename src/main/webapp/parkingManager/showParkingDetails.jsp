@@ -29,7 +29,7 @@
 
 <h3 class="separator2 mtop2"><bean:message key="label.parkUserInfo"/></h3>
 <p>
-	<html:img src="<%= request.getContextPath() +"/parkingManager/parking.do?method=showPhoto&amp;personID="+personID.toString() %>" altKey="personPhoto" bundle="IMAGE_RESOURCES" /></p>
+	<img src="${parkingParty.party.user.profile.avatarUrl}" alt="${parkingParty.party.name}" />
 	<logic:iterate id="occupation" name="parkingParty" property="occupations">
 		<p><bean:write name="occupation" filter="false"/></p>
 	</logic:iterate>
