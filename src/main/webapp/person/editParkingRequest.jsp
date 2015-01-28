@@ -880,8 +880,8 @@ function changeElementsDisplay(elementId, elementId2,elementDisplay, topDisplay)
 
 
 		<bean:define id="person" name="<%= factoryName %>" property="parkingParty.party" type="org.fenixedu.academic.domain.Person"/>
-		<logic:notEqual name="person" property="partyClassification" value="TEACHER">
-			<logic:notEqual name="person" property="partyClassification" value="EMPLOYEE">		
+		<logic:notEqual name="parkingParty" property="partyClassification" value="TEACHER">
+			<logic:notEqual name="parkingParty" property="partyClassification" value="EMPLOYEE">		
 				<div class="mtop2">
 					<logic:notPresent name="allowToChoose">
 					<p>
