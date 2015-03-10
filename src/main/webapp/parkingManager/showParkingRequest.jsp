@@ -76,7 +76,7 @@ function hideCardValidPeriod(toShow){
 		<p>
 			<span class="warning0">
 				<bean:message key="message.userRequestedAs" bundle="PARKING_RESOURCES"/>
-				<strong><bean:message name="parkingRequest" property="requestedAs" bundle="ENUMERATION_RESOURCES"/></strong>
+				<strong><bean:write name="parkingRequest" property="requestedAs"/></strong>
 			</span>
 		</p>
 	</logic:notEmpty>
