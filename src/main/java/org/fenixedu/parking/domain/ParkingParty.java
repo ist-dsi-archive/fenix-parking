@@ -22,8 +22,10 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
@@ -65,6 +67,7 @@ import pt.ist.fenixedu.contracts.domain.util.CategoryType;
 import pt.ist.fenixframework.dml.runtime.RelationAdapter;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 
 public class ParkingParty extends ParkingParty_Base {
 
@@ -220,19 +223,19 @@ public class ParkingParty extends ParkingParty_Base {
     }
 
     public List<String> getSubmitAsRoles() {
-        List<String> roles = new ArrayList<String>();
+        Set<String> roles = new HashSet<String>();
         if (getParty().isPerson()) {
             Person person = (Person) getParty();
             Teacher teacher = person.getTeacher();
             if (teacher != null && RoleType.TEACHER.isMember(person.getUser())
                     && !ProfessionalCategory.isMonitor(teacher, ExecutionSemester.readActualExecutionSemester())) {
-                roles.add(RoleType.TEACHER.name());
+                roles.add(BundleUtil.getString(Bundle.ENUMERATION, RoleType.TEACHER.name()));
             }
             Employee employee = person.getEmployee();
             if (employee != null && !RoleType.TEACHER.isMember(person.getUser())
                     && new ActiveEmployees().isMember(person.getUser())
                     && employee.getCurrentContractByContractType(AccountabilityTypeEnum.WORKING_CONTRACT) != null) {
-                roles.add("EMPLOYEE");
+                roles.add(BundleUtil.getString(Bundle.ENUMERATION, "EMPLOYEE"));
             }
             Student student = person.getStudent();
             if (student != null && RoleType.STUDENT.isMember(person.getUser())) {
@@ -241,14 +244,14 @@ public class ParkingParty extends ParkingParty_Base {
                 for (Registration registration : registrations) {
                     StudentCurricularPlan scp = registration.getActiveStudentCurricularPlan();
                     if (scp != null) {
-                        roles.add(RoleType.STUDENT.name());
+                        roles.add(BundleUtil.getString(Bundle.ENUMERATION, RoleType.STUDENT.name()));
                         break;
                     }
                 }
                 if (!roles.contains(RoleType.STUDENT)) {
                     for (PhdIndividualProgramProcess phdIndividualProgramProcess : person.getPhdIndividualProgramProcessesSet()) {
                         if (phdIndividualProgramProcess.getActiveState().isPhdActive()) {
-                            roles.add(RoleType.STUDENT.name());
+                            roles.add(BundleUtil.getString(Bundle.ENUMERATION, RoleType.STUDENT.name()));
                             break;
                         }
                     }
@@ -259,15 +262,15 @@ public class ParkingParty extends ParkingParty_Base {
                         person.getPersonProfessionalData() != null ? person.getPersonProfessionalData()
                                 .getCurrentPersonContractSituationByCategoryType(CategoryType.GRANT_OWNER) : null;
                 if (currentGrantOwnerContractSituation != null) {
-                    roles.add("GRANT_OWNER");
+                    roles.add(BundleUtil.getString(Bundle.ENUMERATION, "GRANT_OWNER"));
                 }
             }
 
         }
         if (roles.size() == 0) {
-            roles.add(RoleType.PERSON.name());
+            roles.add(BundleUtil.getString(Bundle.ENUMERATION, RoleType.PERSON.name()));
         }
-        return roles;
+        return Lists.newArrayList(roles);
     }
 
     public List<String> getOccupations() {
